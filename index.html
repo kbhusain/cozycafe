@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cozy Soundscape - Coffee Shop & Park Ambience</title>
+  <!-- Tailwind CSS CDN for modern, responsive styling -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button {
+      touch-action: manipulation;
+      cursor: pointer;
+    }
+    /* Custom styling for range sliders */
+    input[type=range] {
+      accent-color: #d97706; /* warm amber */
+    }
+    #thunderFreq {
+      accent-color: #6366f1; /* indigo for thunder frequency */
+    }
+    /* Subtle pulse animation for active sounds */
+    @keyframes gentle-pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+    .pulse-indicator {
+      animation: gentle-pulse 2.5s infinite ease-in-out;
+    }
+  </style>
+
+  <!-- ===================================================================== -->
+  <!-- GOOGLE ADSENSE SCRIPT PLACEHOLDER -->
+  <!-- When approved by Google, uncomment the script below and replace 'ca-pub-XXXXXXXXXXXXXXXX' with your AdSense Publisher ID -->
+  <!--
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+       crossorigin="anonymous"></script>
+  -->
+  <!-- ===================================================================== -->
+</head>
+<body class="bg-stone-900 text-stone-100 min-h-screen flex flex-col justify-between selection:bg-amber-700 selection:text-white">
+
+  <!-- Main Container -->
+  <div class="max-w-5xl w-full mx-auto px-4 py-8 sm:px-6 lg:px-8">
+    
+    <!-- App Header -->
+    <header class="text-center mb-8">
+      <div class="inline-flex items-center justify-center p-3 bg-amber-900/30 border border-amber-700/40 rounded-2xl mb-3 shadow-inner">
+        <span class="text-3xl">☕</span>
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight text-amber-100">Cozy Soundscape</h1>
+      <p class="text-stone-400 mt-2 text-sm sm:text-base max-w-lg mx-auto">
+        Your personal coffee shop & park ambient mixer with procedural noise and custom MP3 support.
+      </p>
+      <div class="inline-flex items-center gap-2 mt-3 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-medium rounded-full">
+        <span>Full Universal MP3 Audio Loader Enabled</span>
+      </div>
+    </header>
+
+    <!-- Master Control Bar -->
+    <section class="bg-stone-800/90 border border-stone-700 rounded-2xl p-5 mb-8 shadow-xl backdrop-blur-sm">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        
+        <!-- Master Play/Pause Button -->
+        <button id="masterToggleBtn" class="w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 active:scale-[0.98] text-white font-semibold rounded-xl shadow-lg shadow-amber-900/30 transition-all flex items-center justify-center gap-2">
+          <span id="masterBtnIcon" class="text-lg">▶</span>
+          <span id="masterBtnText">Start Soundscape</span>
+        </button>
+
+        <!-- Master Status Badge -->
+        <div class="flex items-center gap-2 text-sm text-stone-400">
+          <span id="audioStatusDot" class="w-2.5 h-2.5 rounded-full bg-stone-500 transition-colors"></span>
+          <span id="audioStatusText">Audio Idle (Click Start)</span>
+        </div>
+
+        <!-- Master Volume Control -->
+        <div class="w-full sm:w-64 flex items-center gap-3 bg-stone-900/70 px-4 py-2.5 rounded-xl border border-stone-700/50">
+          <span class="text-stone-400 text-xs font-medium uppercase tracking-wider">Master</span>
+          <input type="range" id="masterVolume" min="0" max="100" value="80" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+          <span id="masterVolumeValue" class="text-xs font-mono text-amber-300 w-8 text-right">80%</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Sound Mixer Grid -->
+    <main class="space-y-8">
+      
+      <!-- Section Header with Presets -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-stone-800 pb-3 gap-2">
+        <div>
+          <h2 class="text-lg font-semibold text-stone-200">Ambient Sound Channels</h2>
+          <p class="text-xs text-stone-400">Every channel supports procedural synthesis or custom MP3 loops</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="presetRainyCafe" class="px-2.5 py-1 text-xs rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 transition-colors">
+            🌧️ Rainy Cafe
+          </button>
+          <button id="presetQuietPark" class="px-2.5 py-1 text-xs rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 border border-stone-700 transition-colors">
+            🌳 Sunny Park
+          </button>
+          <button id="presetResetAll" class="px-2.5 py-1 text-xs rounded-lg bg-stone-800 hover:bg-red-950/40 text-stone-400 hover:text-red-300 border border-stone-700 transition-colors">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Channels Grid (7 Channels with Universal MP3 Uploaders) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        
+        <!-- Sound 1: Gentle Rain -->
+        <div class="bg-stone-800/60 border border-stone-700/70 hover:border-amber-600/50 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl p-2.5 bg-sky-950/60 border border-sky-800/40 rounded-xl text-sky-300">🌧️</span>
+                <div>
+                  <h3 class="font-medium text-stone-100">Gentle Rain</h3>
+                  <p class="text-xs text-stone-400" id="rainSubtitle">Real MP3 Loop Active</p>
+                </div>
+              </div>
+              <button id="rainToggle" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-stone-700 text-stone-300 hover:bg-stone-600">
+                OFF
+              </button>
+            </div>
+
+            <!-- Dual Mode & MP3 Loader -->
+            <div class="flex items-center gap-1.5 mb-3 bg-stone-900/60 p-1 rounded-lg border border-stone-700/50 text-[11px]">
+              <button id="rainModeMp3" class="px-2 py-0.5 rounded font-medium transition-all bg-sky-600 text-white">🎵 MP3</button>
+              <button id="rainModeSynth" class="px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200">⚡ Synth</button>
+              <label for="rainFileInput" class="ml-auto px-1.5 py-0.5 bg-stone-800 hover:bg-stone-700 text-[10px] text-stone-400 hover:text-stone-200 rounded cursor-pointer border border-stone-700" title="Upload custom rain MP3">📁 Choose MP3</label>
+              <input type="file" id="rainFileInput" accept="audio/*" class="hidden">
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-400">
+                <span>Volume</span>
+                <span id="rainVolText" class="font-mono text-stone-300">50%</span>
+              </div>
+              <input type="range" id="rainVolume" min="0" max="100" value="50" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-700/40 flex items-center justify-between text-xs text-stone-500">
+            <span id="rainStatusText">Channel Inactive</span>
+            <span id="rainIndicator" class="hidden w-2 h-2 rounded-full bg-sky-400 pulse-indicator"></span>
+          </div>
+        </div>
+
+        <!-- Sound 2: Rolling Thunder -->
+        <div class="bg-stone-800/60 border border-stone-700/70 hover:border-indigo-600/50 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl p-2.5 bg-indigo-950/60 border border-indigo-800/40 rounded-xl text-indigo-300">⛈️</span>
+                <div>
+                  <h3 class="font-medium text-stone-100">Rolling Thunder</h3>
+                  <p class="text-xs text-stone-400" id="thunderSubtitle">Procedural Storm Active</p>
+                </div>
+              </div>
+              <button id="thunderToggle" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-stone-700 text-stone-300 hover:bg-stone-600">
+                OFF
+              </button>
+            </div>
+
+            <!-- Dual Mode & MP3 Loader -->
+            <div class="flex items-center gap-1.5 mb-3 bg-stone-900/60 p-1 rounded-lg border border-stone-700/50 text-[11px]">
+              <button id="thunderModeSynth" class="px-2 py-0.5 rounded font-medium transition-all bg-indigo-600 text-white">⚡ Synth</button>
+              <button id="thunderModeMp3" class="px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200">🎵 MP3</button>
+              <label for="thunderFileInput" class="ml-auto px-1.5 py-0.5 bg-stone-800 hover:bg-stone-700 text-[10px] text-stone-400 hover:text-stone-200 rounded cursor-pointer border border-stone-700" title="Upload custom thunder MP3">📁 Choose MP3</label>
+              <input type="file" id="thunderFileInput" accept="audio/*" class="hidden">
+            </div>
+
+            <div class="space-y-3">
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-xs text-stone-400">
+                  <span>Volume</span>
+                  <span id="thunderVolText" class="font-mono text-stone-300">60%</span>
+                </div>
+                <input type="range" id="thunderVolume" min="0" max="100" value="60" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+              </div>
+
+              <!-- Strike Rate Control -->
+              <div id="thunderFreqContainer" class="space-y-1.5 bg-stone-900/50 p-2.5 rounded-xl border border-stone-700/50">
+                <div class="flex justify-between text-xs text-stone-300">
+                  <span class="font-medium text-indigo-200">Strike Rate</span>
+                  <span id="thunderFreqText" class="font-mono text-indigo-400 font-semibold">12 / min</span>
+                </div>
+                <input type="range" id="thunderFreq" min="1" max="60" value="12" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+                <div class="flex justify-between text-[10px] text-stone-500 font-mono">
+                  <span>1 / min (rare)</span>
+                  <span>60 / min (storm)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-700/40 flex items-center justify-between text-xs text-stone-500">
+            <button id="strikeThunderBtn" class="px-2 py-0.5 bg-stone-700 hover:bg-indigo-700 text-stone-300 hover:text-white rounded text-[11px] transition-colors">
+              ⚡ Strike Thunder
+            </button>
+            <span id="thunderIndicator" class="hidden w-2 h-2 rounded-full bg-indigo-400 pulse-indicator"></span>
+          </div>
+        </div>
+
+        <!-- Sound 3: Cafe Room Tone -->
+        <div class="bg-stone-800/60 border border-stone-700/70 hover:border-amber-600/50 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl p-2.5 bg-amber-950/60 border border-amber-800/40 rounded-xl text-amber-300">☕</span>
+                <div>
+                  <h3 class="font-medium text-stone-100">Warm Cafe Hum</h3>
+                  <p class="text-xs text-stone-400" id="cafeSubtitle">Procedural Room Tone Active</p>
+                </div>
+              </div>
+              <button id="cafeToggle" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-stone-700 text-stone-300 hover:bg-stone-600">
+                OFF
+              </button>
+            </div>
+
+            <!-- Dual Mode & MP3 Loader -->
+            <div class="flex items-center gap-1.5 mb-3 bg-stone-900/60 p-1 rounded-lg border border-stone-700/50 text-[11px]">
+              <button id="cafeModeSynth" class="px-2 py-0.5 rounded font-medium transition-all bg-amber-600 text-white">⚡ Synth</button>
+              <button id="cafeModeMp3" class="px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200">🎵 MP3</button>
+              <label for="cafeFileInput" class="ml-auto px-1.5 py-0.5 bg-stone-800 hover:bg-stone-700 text-[10px] text-stone-400 hover:text-stone-200 rounded cursor-pointer border border-stone-700" title="Upload custom cafe room tone MP3">📁 Choose MP3</label>
+              <input type="file" id="cafeFileInput" accept="audio/*" class="hidden">
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-400">
+                <span>Volume</span>
+                <span id="cafeVolText" class="font-mono text-stone-300">40%</span>
+              </div>
+              <input type="range" id="cafeVolume" min="0" max="100" value="40" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-700/40 flex items-center justify-between text-xs text-stone-500">
+            <span id="cafeStatusText">Channel Inactive</span>
+            <span id="cafeIndicator" class="hidden w-2 h-2 rounded-full bg-amber-400 pulse-indicator"></span>
+          </div>
+        </div>
+
+        <!-- Sound 4: Barista Steam & Espresso -->
+        <div class="bg-stone-800/60 border border-stone-700/70 hover:border-amber-600/50 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl p-2.5 bg-orange-950/60 border border-orange-800/40 rounded-xl text-orange-300">💨</span>
+                <div>
+                  <h3 class="font-medium text-stone-100">Barista Steam</h3>
+                  <p class="text-xs text-stone-400" id="steamSubtitle">Procedural Steam Wand Active</p>
+                </div>
+              </div>
+              <button id="steamToggle" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-stone-700 text-stone-300 hover:bg-stone-600">
+                OFF
+              </button>
+            </div>
+
+            <!-- Dual Mode & MP3 Loader -->
+            <div class="flex items-center gap-1.5 mb-3 bg-stone-900/60 p-1 rounded-lg border border-stone-700/50 text-[11px]">
+              <button id="steamModeSynth" class="px-2 py-0.5 rounded font-medium transition-all bg-orange-600 text-white">⚡ Synth</button>
+              <button id="steamModeMp3" class="px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200">🎵 MP3</button>
+              <label for="steamFileInput" class="ml-auto px-1.5 py-0.5 bg-stone-800 hover:bg-stone-700 text-[10px] text-stone-400 hover:text-stone-200 rounded cursor-pointer border border-stone-700" title="Upload custom barista/espresso MP3">📁 Choose MP3</label>
+              <input type="file" id="steamFileInput" accept="audio/*" class="hidden">
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-400">
+                <span>Volume</span>
+                <span id="steamVolText" class="font-mono text-stone-300">35%</span>
+              </div>
+              <input type="range" id="steamVolume" min="0" max="100" value="35" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-700/40 flex items-center justify-between text-xs text-stone-500">
+            <span id="steamStatusText">Channel Inactive</span>
+            <span id="steamIndicator" class="hidden w-2 h-2 rounded-full bg-orange-400 pulse-indicator"></span>
+          </div>
+        </div>
+
+        <!-- Sound 5: Dishes in Sink -->
+        <div class="bg-stone-800/60 border border-stone-700/70 hover:border-amber-600/50 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl p-2.5 bg-yellow-950/60 border border-yellow-800/40 rounded-xl text-yellow-300">🍽️</span>
+                <div>
+                  <h3 class="font-medium text-stone-100">Dishes in Sink</h3>
+                  <p class="text-xs text-stone-400" id="clinkSubtitle">Procedural Sink Clatter Active</p>
+                </div>
+              </div>
+              <button id="clinkToggle" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-stone-700 text-stone-300 hover:bg-stone-600">
+                OFF
+              </button>
+            </div>
+
+            <!-- Dual Mode & MP3 Loader -->
+            <div class="flex items-center gap-1.5 mb-3 bg-stone-900/60 p-1 rounded-lg border border-stone-700/50 text-[11px]">
+              <button id="clinkModeSynth" class="px-2 py-0.5 rounded font-medium transition-all bg-yellow-600 text-white">⚡ Synth</button>
+              <button id="clinkModeMp3" class="px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200">🎵 MP3</button>
+              <label for="clinkFileInput" class="ml-auto px-1.5 py-0.5 bg-stone-800 hover:bg-stone-700 text-[10px] text-stone-400 hover:text-stone-200 rounded cursor-pointer border border-stone-700" title="Upload custom dish clatter MP3">📁 Choose MP3</label>
+              <input type="file" id="clinkFileInput" accept="audio/*" class="hidden">
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-400">
+                <span>Volume</span>
+                <span id="clinkVolText" class="font-mono text-stone-300">30%</span>
+              </div>
+              <input type="range" id="clinkVolume" min="0" max="100" value="30" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-700/40 flex items-center justify-between text-xs text-stone-500">
+            <button id="clatterDishesBtn" class="px-2 py-0.5 bg-stone-700 hover:bg-yellow-700 text-stone-300 hover:text-white rounded text-[11px] transition-colors">
+              🍽️ Clatter Dishes
+            </button>
+            <span id="clinkIndicator" class="hidden w-2 h-2 rounded-full bg-yellow-400 pulse-indicator"></span>
+          </div>
+        </div>
+
+        <!-- Sound 6: Soft Chatter -->
+        <div class="bg-stone-800/60 border border-stone-700/70 hover:border-amber-600/50 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl p-2.5 bg-rose-950/60 border border-rose-800/40 rounded-xl text-rose-300">👥</span>
+                <div>
+                  <h3 class="font-medium text-stone-100">Soft Chatter</h3>
+                  <p class="text-xs text-stone-400" id="chatterSubtitle">Real MP3 Loop Active</p>
+                </div>
+              </div>
+              <button id="chatterToggle" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-stone-700 text-stone-300 hover:bg-stone-600">
+                OFF
+              </button>
+            </div>
+
+            <!-- Dual Mode & MP3 Loader -->
+            <div class="flex items-center gap-1.5 mb-3 bg-stone-900/60 p-1 rounded-lg border border-stone-700/50 text-[11px]">
+              <button id="chatterModeMp3" class="px-2 py-0.5 rounded font-medium transition-all bg-rose-600 text-white">🎵 MP3</button>
+              <button id="chatterModeSynth" class="px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200">⚡ Synth</button>
+              <label for="chatterFileInput" class="ml-auto px-1.5 py-0.5 bg-stone-800 hover:bg-stone-700 text-[10px] text-stone-400 hover:text-stone-200 rounded cursor-pointer border border-stone-700" title="Upload custom chatter MP3">📁 Choose MP3</label>
+              <input type="file" id="chatterFileInput" accept="audio/*" class="hidden">
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-400">
+                <span>Volume</span>
+                <span id="chatterVolText" class="font-mono text-stone-300">25%</span>
+              </div>
+              <input type="range" id="chatterVolume" min="0" max="100" value="25" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-700/40 flex items-center justify-between text-xs text-stone-500">
+            <span id="chatterStatusText">Channel Inactive</span>
+            <span id="chatterIndicator" class="hidden w-2 h-2 rounded-full bg-rose-400 pulse-indicator"></span>
+          </div>
+        </div>
+
+        <!-- Sound 7: Distant Traffic -->
+        <div class="bg-stone-800/60 border border-stone-700/70 hover:border-amber-600/50 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl p-2.5 bg-emerald-950/60 border border-emerald-800/40 rounded-xl text-emerald-300">🚗</span>
+                <div>
+                  <h3 class="font-medium text-stone-100">Distant Traffic</h3>
+                  <p class="text-xs text-stone-400" id="trafficSubtitle">Procedural Traffic Active</p>
+                </div>
+              </div>
+              <button id="trafficToggle" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-stone-700 text-stone-300 hover:bg-stone-600">
+                OFF
+              </button>
+            </div>
+
+            <!-- Dual Mode & MP3 Loader -->
+            <div class="flex items-center gap-1.5 mb-3 bg-stone-900/60 p-1 rounded-lg border border-stone-700/50 text-[11px]">
+              <button id="trafficModeSynth" class="px-2 py-0.5 rounded font-medium transition-all bg-emerald-600 text-white">⚡ Synth</button>
+              <button id="trafficModeMp3" class="px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200">🎵 MP3</button>
+              <label for="trafficFileInput" class="ml-auto px-1.5 py-0.5 bg-stone-800 hover:bg-stone-700 text-[10px] text-stone-400 hover:text-stone-200 rounded cursor-pointer border border-stone-700" title="Upload custom traffic MP3">📁 Choose MP3</label>
+              <input type="file" id="trafficFileInput" accept="audio/*" class="hidden">
+            </div>
+
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-400">
+                <span>Volume</span>
+                <span id="trafficVolText" class="font-mono text-stone-300">30%</span>
+              </div>
+              <input type="range" id="trafficVolume" min="0" max="100" value="30" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-700/40 flex items-center justify-between text-xs text-stone-500">
+            <span id="trafficStatusText">Channel Inactive</span>
+            <span id="trafficIndicator" class="hidden w-2 h-2 rounded-full bg-emerald-400 pulse-indicator"></span>
+          </div>
+        </div>
+
+        <!-- Sound 8: Crackling Fire -->
+        <div class="bg-stone-800/60 border border-stone-700/70 hover:border-amber-600/50 rounded-2xl p-5 transition-all shadow-md flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center gap-3">
+                <span class="text-2xl p-2.5 bg-amber-950/60 border border-amber-800/40 rounded-xl text-amber-300">🪵</span>
+                <div>
+                  <h3 class="font-medium text-stone-100">Crackling Fire</h3>
+                  <p class="text-xs text-stone-400" id="fireSubtitle">Real MP3 Loop Active</p>
+                </div>
+              </div>
+              <button id="fireToggle" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-stone-700 text-stone-300 hover:bg-stone-600">OFF</button>
+            </div>
+
+            <!-- Mode Selector & Custom Uploader -->
+            <div class="flex items-center gap-1.5 mb-3 bg-stone-900/60 p-1 rounded-lg border border-stone-700/50 text-[11px]">
+              <button id="fireModeMp3" class="px-2 py-0.5 rounded font-medium transition-all bg-amber-600 text-white">🎵 MP3</button>
+              <button id="fireModeSynth" class="px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200">⚡ Synth</button>
+              <label for="fireFileInput" class="ml-auto px-1.5 py-0.5 bg-stone-800 hover:bg-stone-700 text-[10px] text-stone-400 hover:text-stone-200 rounded cursor-pointer border border-stone-700">📁 Choose MP3</label>
+              <input type="file" id="fireFileInput" accept="audio/*" class="hidden">
+            </div>
+
+            <!-- Volume Slider -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs text-stone-400">
+                <span>Volume</span>
+                <span id="fireVolText" class="font-mono text-stone-300">45%</span>
+              </div>
+              <input type="range" id="fireVolume" min="0" max="100" value="45" class="w-full h-1.5 bg-stone-700 rounded-lg cursor-pointer">
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-stone-700/40 flex items-center justify-between text-xs text-stone-500">
+            <span id="fireStatusText">Channel Inactive</span>
+            <span id="fireIndicator" class="hidden w-2 h-2 rounded-full bg-amber-400 pulse-indicator"></span>
+          </div>
+        </div>
+
+
+      </div>
+
+      
+      <!-- =================================================================== -->
+      <!-- GOOGLE ADSENSE RESPONSIVE AD PLACEHOLDER (MID-PAGE BANNER) -->
+      <!-- =================================================================== -->
+      <div class="my-6 p-4 bg-stone-900/50 border border-dashed border-stone-700/60 rounded-2xl flex flex-col items-center justify-center text-center">
+        <span class="text-[10px] uppercase font-mono tracking-widest text-stone-500 mb-1.5 flex items-center gap-1.5">
+          <span>📢</span> Advertisement
+        </span>
+        <!-- When approved, uncomment and add your client & slot IDs below: -->
+        <!--
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="1234567890"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+        -->
+        <div class="w-full max-w-[728px] h-20 sm:h-24 bg-stone-800/40 rounded-xl flex flex-col items-center justify-center border border-stone-800 text-stone-400 text-xs gap-1">
+          <span class="font-medium text-stone-300">Google AdSense Responsive Unit</span>
+          <span class="text-[11px] text-stone-500 font-mono">Slot: Mid-Page Leaderboard (728x90 / Auto)</span>
+        </div>
+      </div>
+
+      <!-- =================================================================== -->
+      <!-- SPOTIFY MUSIC COMPANION -->
+      <!-- =================================================================== -->
+      <section class="bg-stone-800/80 border border-stone-700 rounded-2xl p-5 sm:p-6 shadow-xl backdrop-blur-sm">
+        
+        <!-- Header & Spotify Badge -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-700/60 pb-4 mb-5">
+          <div class="flex items-center gap-3">
+            <span class="text-2xl p-2.5 bg-emerald-950/60 border border-emerald-800/50 rounded-xl text-emerald-400">🎵</span>
+            <div>
+              <h2 class="text-lg font-bold text-stone-100">Spotify Music Companion</h2>
+              <p class="text-xs text-stone-400">Stream your Spotify playlists and library alongside your ambient mix</p>
+            </div>
+          </div>
+
+          <!-- Spotify Connected Badge -->
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-950/60 border border-emerald-700/50 rounded-xl text-xs text-emerald-300 font-medium">
+            <span>🟢</span>
+            <span>Spotify Player</span>
+          </div>
+        </div>
+
+        <!-- Curated Quick Picks -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between text-xs text-stone-400 mb-2">
+            <span>Curated Coffeehouse Playlists:</span>
+            <span class="text-emerald-400 font-medium">Spotify Embed</span>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+            <button id="quickLofi" class="p-2.5 bg-stone-900/70 hover:bg-stone-700/60 border border-stone-700/60 rounded-xl text-left transition-colors flex flex-col gap-1">
+              <span class="font-medium text-stone-200 flex items-center gap-1">☕ Lo-Fi Beats</span>
+              <span class="text-[10px] text-stone-400">Relaxing chill beats</span>
+            </button>
+            <button id="quickAcoustic" class="p-2.5 bg-stone-900/70 hover:bg-stone-700/60 border border-stone-700/60 rounded-xl text-left transition-colors flex flex-col gap-1">
+              <span class="font-medium text-stone-200 flex items-center gap-1">🎸 Acoustic Cafe</span>
+              <span class="text-[10px] text-stone-400">Warm guitar & piano</span>
+            </button>
+            <button id="quickJazz" class="p-2.5 bg-stone-900/70 hover:bg-stone-700/60 border border-stone-700/60 rounded-xl text-left transition-colors flex flex-col gap-1">
+              <span class="font-medium text-stone-200 flex items-center gap-1">🎷 Midnight Jazz</span>
+              <span class="text-[10px] text-stone-400">Coffee table vibes</span>
+            </button>
+            <button id="quickPeaceful" class="p-2.5 bg-stone-900/70 hover:bg-stone-700/60 border border-stone-700/60 rounded-xl text-left transition-colors flex flex-col gap-1">
+              <span class="font-medium text-stone-200 flex items-center gap-1">🎹 Peaceful Piano</span>
+              <span class="text-[10px] text-stone-400">Deep focus study</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Custom Spotify URL Input Form -->
+        <div class="mb-5">
+          <div class="flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-1">
+              <input type="text" id="customMusicUrl" placeholder="Paste your Spotify playlist, album, or track URL (open.spotify.com)..." class="w-full px-3.5 py-2.5 bg-stone-900 border border-stone-700 rounded-xl text-xs sm:text-sm text-stone-200 placeholder-stone-500 focus:outline-none focus:border-emerald-500 transition-colors">
+            </div>
+            <button id="loadMusicBtn" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-medium text-xs sm:text-sm rounded-xl transition-all shadow-md whitespace-nowrap flex items-center justify-center gap-1.5">
+              <span>▶</span> Load Spotify
+            </button>
+          </div>
+          <p id="musicStatusMessage" class="text-[11px] text-stone-400 mt-1.5">
+            Tip: You can paste any link from open.spotify.com (playlist, album, or track).
+          </p>
+        </div>
+
+        <!-- Embedded Spotify Player Viewport -->
+        <div id="playerWrapper" class="w-full rounded-xl overflow-hidden bg-stone-900 border border-stone-700/60 shadow-inner">
+          <iframe id="musicIframe" class="w-full border-0 transition-opacity duration-300" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+
+      </section>
+
+    
+      <!-- =================================================================== -->
+      <!-- GOOGLE ADSENSE RESPONSIVE AD PLACEHOLDER (BOTTOM BANNER) -->
+      <!-- =================================================================== -->
+      <div class="mt-6 p-4 bg-stone-900/50 border border-dashed border-stone-700/60 rounded-2xl flex flex-col items-center justify-center text-center">
+        <span class="text-[10px] uppercase font-mono tracking-widest text-stone-500 mb-1.5 flex items-center gap-1.5">
+          <span>📢</span> Advertisement
+        </span>
+        <!-- When approved, uncomment and add your client & slot IDs below: -->
+        <!--
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="0987654321"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+        -->
+        <div class="w-full max-w-[728px] h-20 sm:h-24 bg-stone-800/40 rounded-xl flex flex-col items-center justify-center border border-stone-800 text-stone-400 text-xs gap-1">
+          <span class="font-medium text-stone-300">Google AdSense Responsive Unit</span>
+          <span class="text-[11px] text-stone-500 font-mono">Slot: Bottom Footer Banner (728x90 / Auto)</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer Note -->
+    <footer class="mt-12 text-center text-xs text-stone-500 border-t border-stone-800/80 pt-6">
+      <p>Single Page Web App — Built with Semantic HTML, Tailwind CSS, Web Audio API, and Spotify Web Embed</p>
+    </footer>
+
+  </div>
+
+  <!-- JavaScript Audio Engine & Universal Audio Controller -->
+  <script>
+    // =========================================================================
+    // 1. EMBEDDED REAL MP3 AUDIO LOOPS (From User Uploads)
+    // =========================================================================
+    
+    // Audio elements for each channel
+    const channelAudios = {
+      rain: new Audio('./audio/gentle-rain-ambient.mp3'),
+      cafe: new Audio('./audio/cafe.mp3'),
+      steam: new Audio('./audio/barista.mp3'),
+      clink: new Audio('./audio/washing-dishes-52498.mp3'),
+      chatter: new Audio('./audio/conversations.mp3'),
+      traffic: new Audio('./audio/traffic.mp3'),
+      thunder: new Audio('./audio/thunder.mp3'),
+      fire: new Audio('./audio/fireside.mp3')
+    };
+
+    // Set loop to true for all channel audio elements
+    Object.values(channelAudios).forEach(a => { a.loop = true; });
+
+    // Theme color map for active state styling
+    const channelColors = {
+      rain: 'sky',
+      thunder: 'indigo',
+      cafe: 'amber',
+      steam: 'orange',
+      clink: 'yellow',
+      chatter: 'rose',
+      traffic: 'emerald',
+      fire:'red'
+    };
+
+    // =========================================================================
+    // 2. STATE & AUDIO CONTEXT INITIALIZATION
+    // =========================================================================
+    let audioCtx = null;
+    let isMasterPlaying = false;
+    let masterGainNode = null;
+    let masterVolumePct = 80;
+
+    // Timers for periodic random audio events
+    let thunderTimer = null;
+    let steamTimer = null;
+    let clinkTimer = null;
+    let fireTimer = null; 
+
+    // Channels state definition
+    const channels = {
+      rain: { enabled: false, volume: 0.5, mode: 'mp3', nodes: {} },
+      thunder: { enabled: false, volume: 0.6, frequency: 12, mode: 'mp3', nodes: {} },
+      cafe: { enabled: false, volume: 0.4, mode: 'synth', nodes: {} },
+      steam: { enabled: false, volume: 0.35, mode: 'mp3', nodes: {} },
+      clink: { enabled: false, volume: 0.3, mode: 'synth', nodes: {} },
+      chatter: { enabled: false, volume: 0.25, mode: 'mp3', nodes: {} },
+      fire: { enabled: false, volume: 0.25, mode: 'mp3', nodes: {} },
+      traffic: { enabled: false, volume: 0.3, mode: 'synth', nodes: {} }
+    };
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+
+        masterGainNode = audioCtx.createGain();
+        masterGainNode.gain.setValueAtTime(masterVolumePct / 100, audioCtx.currentTime);
+        masterGainNode.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // =========================================================================
+    // 3. PROCEDURAL NOISE BUFFER GENERATORS
+    // =========================================================================
+    function createNoiseBuffer(type = 'white', duration = 5) {
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        if (type === 'pink') {
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 3.5;
+        } else if (type === 'brown') {
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 4.5;
+        } else {
+          data[i] = white;
+        }
+      }
+      return buffer;
+    }
+
+    // =========================================================================
+    // 4. SOUND SYNTHESIZERS & DISPATCHERS
+    // =========================================================================
+
+    // Universal Start Channel Function (iOS Safari Safe)
+    function startChannelAudio(id) {
+      const ch = channels[id];
+      const audioEl = channelAudios[id];
+
+      if (ch.mode === 'mp3') {
+        stopProcedural(id);
+        if (audioEl && audioEl.src && audioEl.src !== window.location.href) {
+          try {
+            audioEl.volume = ch.volume * (masterVolumePct / 100);
+            audioEl.play().catch(() => {});
+          } catch(e) {}
+        }
+      } else {
+        try {
+          if (audioEl && audioEl.src && audioEl.src !== window.location.href) {
+            audioEl.pause();
+          }
+        } catch(e) {}
+        startProcedural(id);
+      }
+    }
+
+    // Universal Stop Channel Function (iOS Safari Safe)
+    function stopChannelAudio(id) {
+      try {
+        const audioEl = channelAudios[id];
+        if (audioEl && audioEl.src && audioEl.src !== window.location.href) {
+          audioEl.pause();
+        }
+      } catch(e) {}
+      stopProcedural(id);
+    }
+
+    function startProcedural(id) {
+      if (id === 'rain') startRainProcedural();
+      else if (id === 'thunder') startThunderProcedural();
+      else if (id === 'cafe') startCafeProcedural();
+      else if (id === 'steam') startSteamProcedural();
+      else if (id === 'clink') startClinkProcedural();
+      else if (id === 'chatter') startChatterProcedural();
+      else if (id === 'traffic') startTrafficProcedural();
+    }
+
+    function stopProcedural(id) {
+      if (id === 'rain') stopRainProcedural();
+      else if (id === 'thunder') stopThunderProcedural();
+      else if (id === 'cafe') stopCafeProcedural();
+      else if (id === 'steam') stopSteamProcedural();
+      else if (id === 'clink') stopClinkProcedural();
+      else if (id === 'chatter') stopChatterProcedural();
+      else if (id === 'traffic') stopTrafficProcedural();
+    }
+
+    // --- Procedural Generators ---
+
+    function startRainProcedural() {
+      if (!audioCtx || channels.rain.nodes.source) return;
+      const buffer = createNoiseBuffer('pink');
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(850, audioCtx.currentTime);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(channels.rain.volume, audioCtx.currentTime);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGainNode);
+      source.start(0);
+
+      channels.rain.nodes = { source, filter, gain };
+    }
+
+    function stopRainProcedural() {
+      if (channels.rain.nodes.source) {
+        try { channels.rain.nodes.source.stop(); } catch(e){}
+        channels.rain.nodes = {};
+      }
+    }
+
+    function triggerThunderRoll() {
+      if (!audioCtx || !isMasterPlaying || !channels.thunder.enabled || channels.thunder.mode === 'mp3') return;
+
+      const now = audioCtx.currentTime;
+      const freq = channels.thunder.frequency || 12;
+
+      const maxDur = Math.max(1.4, Math.min(6.5, (60 / freq) * 1.8));
+      const duration = (maxDur * 0.7) + Math.random() * (maxDur * 0.4);
+
+      const buffer = createNoiseBuffer('brown', Math.ceil(duration));
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.Q.setValueAtTime(3.5, now);
+      filter.frequency.setValueAtTime(70 + Math.random() * 40, now);
+      filter.frequency.linearRampToValueAtTime(140, now + Math.min(0.8, duration * 0.25));
+      filter.frequency.exponentialRampToValueAtTime(45, now + duration);
+
+      const gain = audioCtx.createGain();
+      const peakVol = channels.thunder.volume * (0.8 + Math.random() * 0.4);
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.exponentialRampToValueAtTime(peakVol, now + Math.min(0.35, duration * 0.12));
+      gain.gain.exponentialRampToValueAtTime(peakVol * 0.45, now + Math.min(1.4, duration * 0.45));
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGainNode);
+
+      source.start(now);
+      source.stop(now + duration);
+    }
+
+    function scheduleNextThunder() {
+      if (thunderTimer) clearTimeout(thunderTimer);
+      if (!isMasterPlaying || !channels.thunder.enabled || channels.thunder.mode === 'mp3') return;
+
+      const strikesPerMin = Math.max(1, Math.min(60, channels.thunder.frequency || 12));
+      const baseIntervalMs = 60000 / strikesPerMin;
+
+      const variance = (Math.random() * 0.36) - 0.18;
+      const nextDelay = Math.max(200, baseIntervalMs * (1 + variance));
+
+      thunderTimer = setTimeout(() => {
+        triggerThunderRoll();
+        scheduleNextThunder();
+      }, nextDelay);
+    }
+
+    function startThunderProcedural() {
+      if (thunderTimer) clearTimeout(thunderTimer);
+      const buffer = createNoiseBuffer('brown');
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(60, audioCtx.currentTime);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(channels.thunder.volume * 0.15, audioCtx.currentTime);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGainNode);
+      source.start(0);
+
+      channels.thunder.nodes = { source, gain, filter };
+
+      setTimeout(() => {
+        triggerThunderRoll();
+        scheduleNextThunder();
+      }, 400);
+    }
+
+    function stopThunderProcedural() {
+      if (thunderTimer) { clearTimeout(thunderTimer); thunderTimer = null; }
+      if (channels.thunder.nodes.source) {
+        try { channels.thunder.nodes.source.stop(); } catch(e){}
+        channels.thunder.nodes = {};
+      }
+    }
+
+    function startCafeProcedural() {
+      if (!audioCtx || channels.cafe.nodes.source) return;
+      const buffer = createNoiseBuffer('brown');
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(320, audioCtx.currentTime);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(channels.cafe.volume, audioCtx.currentTime);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGainNode);
+      source.start(0);
+
+      channels.cafe.nodes = { source, filter, gain };
+    }
+
+    function stopCafeProcedural() {
+      if (channels.cafe.nodes.source) {
+        try { channels.cafe.nodes.source.stop(); } catch(e){}
+        channels.cafe.nodes = {};
+      }
+    }
+
+    function triggerSteamBurst() {
+      if (!audioCtx || !isMasterPlaying || !channels.steam.enabled || channels.steam.mode === 'mp3') return;
+      const now = audioCtx.currentTime;
+      const burstLen = 2.0 + Math.random() * 2.5;
+
+      const buffer = createNoiseBuffer('white', Math.ceil(burstLen));
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.Q.setValueAtTime(1.8, now);
+      filter.frequency.setValueAtTime(1600 + Math.random() * 400, now);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.001, now);
+      gain.gain.linearRampToValueAtTime(channels.steam.volume, now + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + burstLen);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGainNode);
+      source.start(now);
+      source.stop(now + burstLen);
+    }
+
+    function startSteamProcedural() {
+      if (steamTimer) clearInterval(steamTimer);
+      const buffer = createNoiseBuffer('white');
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(2200, audioCtx.currentTime);
+      filter.Q.setValueAtTime(1.2, audioCtx.currentTime);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(channels.steam.volume * 0.12, audioCtx.currentTime);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGainNode);
+      source.start(0);
+
+      channels.steam.nodes = { source, gain, filter };
+
+      steamTimer = setInterval(() => { triggerSteamBurst(); }, 9500);
+      setTimeout(() => { triggerSteamBurst(); }, 1200);
+    }
+
+    function stopSteamProcedural() {
+      if (steamTimer) { clearInterval(steamTimer); steamTimer = null; }
+      if (channels.steam.nodes.source) {
+        try { channels.steam.nodes.source.stop(); } catch(e){}
+        channels.steam.nodes = {};
+      }
+    }
+
+    function playDishesInSinkClatter() {
+      if (!audioCtx || !isMasterPlaying || !channels.clink.enabled || channels.clink.mode === 'mp3') return;
+      const startTime = audioCtx.currentTime;
+
+      const eventType = Math.floor(Math.random() * 3);
+      const tapCount = eventType === 0 ? (2 + Math.floor(Math.random() * 2)) : (eventType === 1 ? 3 : 1);
+
+      for (let i = 0; i < tapCount; i++) {
+        const tapDelay = i === 0 ? 0 : (0.035 + (i * 0.045) + Math.random() * 0.025);
+        const tapTime = startTime + tapDelay;
+        const decayScale = 1.0 - (i * 0.22);
+
+        const clickLen = Math.floor(audioCtx.sampleRate * 0.025);
+        const clickBuffer = audioCtx.createBuffer(1, clickLen, audioCtx.sampleRate);
+        const clickData = clickBuffer.getChannelData(0);
+        for (let j = 0; j < clickLen; j++) {
+          clickData[j] = (Math.random() * 2 - 1) * Math.exp(-j / (audioCtx.sampleRate * 0.005));
+        }
+        const clickSrc = audioCtx.createBufferSource();
+        clickSrc.buffer = clickBuffer;
+        const clickFilter = audioCtx.createBiquadFilter();
+        clickFilter.type = 'highpass';
+        clickFilter.frequency.setValueAtTime(1400, tapTime);
+        const clickGain = audioCtx.createGain();
+        clickGain.gain.setValueAtTime(channels.clink.volume * 0.35 * decayScale, tapTime);
+        clickGain.gain.exponentialRampToValueAtTime(0.0001, tapTime + 0.025);
+        clickSrc.connect(clickFilter);
+        clickFilter.connect(clickGain);
+        clickGain.connect(masterGainNode);
+        clickSrc.start(tapTime);
+
+        const bodyOsc = audioCtx.createOscillator();
+        bodyOsc.type = 'triangle';
+        const baseFreq = (eventType === 2 ? 460 : (eventType === 0 ? 640 : 780)) + (Math.random() * 60 - 30);
+        bodyOsc.frequency.setValueAtTime(baseFreq, tapTime);
+        bodyOsc.frequency.exponentialRampToValueAtTime(baseFreq * 0.86, tapTime + 0.12);
+
+        const bodyGain = audioCtx.createGain();
+        bodyGain.gain.setValueAtTime(channels.clink.volume * 0.55 * decayScale, tapTime);
+        bodyGain.gain.exponentialRampToValueAtTime(0.0001, tapTime + (eventType === 0 ? 0.14 : 0.09));
+
+        bodyOsc.connect(bodyGain);
+        bodyGain.connect(masterGainNode);
+        bodyOsc.start(tapTime);
+        bodyOsc.stop(tapTime + 0.16);
+
+        const glazeOsc = audioCtx.createOscillator();
+        glazeOsc.type = 'sine';
+        const glazeFreq = (eventType === 1 ? 2800 : 2100) + (Math.random() * 500 - 250);
+        glazeOsc.frequency.setValueAtTime(glazeFreq, tapTime);
+
+        const glazeGain = audioCtx.createGain();
+        glazeGain.gain.setValueAtTime(channels.clink.volume * 0.4 * decayScale, tapTime);
+        glazeGain.gain.exponentialRampToValueAtTime(0.0001, tapTime + 0.075);
+
+        glazeOsc.connect(glazeGain);
+        glazeGain.connect(masterGainNode);
+        glazeOsc.start(tapTime);
+        glazeOsc.stop(tapTime + 0.08);
+
+        if (i === 0 && Math.random() > 0.35) {
+          const sinkOsc = audioCtx.createOscillator();
+          sinkOsc.type = 'sine';
+          sinkOsc.frequency.setValueAtTime(1180 + Math.random() * 120, tapTime);
+          const sinkGain = audioCtx.createGain();
+          sinkGain.gain.setValueAtTime(channels.clink.volume * 0.16, tapTime);
+          sinkGain.gain.exponentialRampToValueAtTime(0.0001, tapTime + 0.18);
+          sinkOsc.connect(sinkGain);
+          sinkGain.connect(masterGainNode);
+          sinkOsc.start(tapTime);
+          sinkOsc.stop(tapTime + 0.20);
+        }
+      }
+    }
+
+    function startClinkProcedural() {
+      if (clinkTimer) clearInterval(clinkTimer);
+      clinkTimer = setInterval(() => {
+        playDishesInSinkClatter();
+      }, 4200);
+      setTimeout(playDishesInSinkClatter, 800);
+    }
+
+    function stopClinkProcedural() {
+      if (clinkTimer) { clearInterval(clinkTimer); clinkTimer = null; }
+    }
+
+    function startChatterProcedural() {
+      if (!audioCtx || channels.chatter.nodes.source) return;
+      const buffer = createNoiseBuffer('pink');
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+
+      const filter1 = audioCtx.createBiquadFilter();
+      filter1.type = 'bandpass';
+      filter1.frequency.setValueAtTime(680, audioCtx.currentTime);
+      filter1.Q.setValueAtTime(4.0, audioCtx.currentTime);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(channels.chatter.volume, audioCtx.currentTime);
+
+      source.connect(filter1);
+      filter1.connect(gain);
+      gain.connect(masterGainNode);
+      source.start(0);
+
+      channels.chatter.nodes = { source, filter: filter1, gain };
+    }
+
+    function stopChatterProcedural() {
+      if (channels.chatter.nodes.source) {
+        try { channels.chatter.nodes.source.stop(); } catch(e){}
+        channels.chatter.nodes = {};
+      }
+    }
+
+    function startTrafficProcedural() {
+      if (!audioCtx || channels.traffic.nodes.source) return;
+      const buffer = createNoiseBuffer('brown');
+      const source = audioCtx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(130, audioCtx.currentTime);
+
+      const lfo = audioCtx.createOscillator();
+      lfo.frequency.setValueAtTime(0.12, audioCtx.currentTime);
+      const lfoGain = audioCtx.createGain();
+      lfoGain.gain.setValueAtTime(channels.traffic.volume * 0.35, audioCtx.currentTime);
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(channels.traffic.volume, audioCtx.currentTime);
+
+      lfo.connect(gain.gain);
+      lfo.start(0);
+
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterGainNode);
+      source.start(0);
+
+      channels.traffic.nodes = { source, filter, gain, lfo };
+    }
+
+    function stopTrafficProcedural() {
+      if (channels.traffic.nodes.source) {
+        try {
+          channels.traffic.nodes.source.stop();
+          if (channels.traffic.nodes.lfo) channels.traffic.nodes.lfo.stop();
+        } catch(e){}
+        channels.traffic.nodes = {};
+      }
+    }
+
+    // Sync all channel states
+    function updateAudioOutputs() {
+      Object.keys(channels).forEach(id => {
+        if (isMasterPlaying && channels[id].enabled) {
+          startChannelAudio(id);
+        } else {
+          stopChannelAudio(id);
+        }
+      });
+    }
+
+    // =========================================================================
+    // 5. UI BINDINGS & CONTROLS
+    // =========================================================================
+
+    // Master Elements
+    const masterToggleBtn = document.getElementById('masterToggleBtn');
+    const masterBtnIcon = document.getElementById('masterBtnIcon');
+    const masterBtnText = document.getElementById('masterBtnText');
+    const audioStatusDot = document.getElementById('audioStatusDot');
+    const audioStatusText = document.getElementById('audioStatusText');
+    const masterVolume = document.getElementById('masterVolume');
+    const masterVolumeValue = document.getElementById('masterVolumeValue');
+
+    function syncMasterPlayingUI() {
+      if (isMasterPlaying) {
+        masterBtnIcon.textContent = '⏸';
+        masterBtnText.textContent = 'Pause Soundscape';
+        audioStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400';
+        audioStatusText.textContent = 'Soundscape Active';
+      } else {
+        masterBtnIcon.textContent = '▶';
+        masterBtnText.textContent = 'Start Soundscape';
+        audioStatusDot.className = 'w-2.5 h-2.5 rounded-full bg-stone-500';
+        audioStatusText.textContent = 'Audio Paused';
+      }
+    }
+
+    function handleMasterToggle(e) {
+      if (e) e.preventDefault();
+
+      if (!audioCtx) {
+        initAudioContext();
+      }
+
+      isMasterPlaying = !isMasterPlaying;
+
+      if (isMasterPlaying) {
+        // Resuming: activate hardware audio on iOS
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume().catch(() => {});
+        }
+        if (masterGainNode && audioCtx) {
+          masterGainNode.gain.setValueAtTime(masterVolumePct / 100, audioCtx.currentTime);
+        }
+
+        const anyOn = Object.values(channels).some(c => c.enabled);
+        if (!anyOn) {
+          channels.rain.enabled = true;
+          channels.thunder.enabled = true;
+          updateChannelUI('rain');
+          updateChannelUI('thunder');
+        }
+        updateAudioOutputs();
+      } else {
+        // Master Pause: immediately silence hardware and stop all streams on iOS Safari
+        if (masterGainNode && audioCtx) {
+          try {
+            masterGainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+          } catch(e) {}
+        }
+        if (audioCtx && audioCtx.state === 'running') {
+          audioCtx.suspend().catch(() => {});
+        }
+
+        // Clear all timers
+        if (thunderTimer) { clearTimeout(thunderTimer); thunderTimer = null; }
+        if (steamTimer) { clearInterval(steamTimer); steamTimer = null; }
+        if (clinkTimer) { clearInterval(clinkTimer); clinkTimer = null; }
+
+        // Pause all HTML5 audio elements safely
+        Object.keys(channelAudios).forEach(id => {
+          try {
+            const a = channelAudios[id];
+            if (a && a.src && a.src !== window.location.href) {
+              a.pause();
+            }
+          } catch(e) {}
+        });
+
+        // Stop all procedural nodes
+        Object.keys(channels).forEach(id => {
+          stopProcedural(id);
+        });
+      }
+
+      syncMasterPlayingUI();
+      updateAllIndicators();
+    }
+
+    masterToggleBtn.addEventListener('click', handleMasterToggle);
+    masterToggleBtn.addEventListener('touchend', (e) => {
+      // Prevent double firing on touch devices while ensuring instant response
+      e.preventDefault();
+      handleMasterToggle();
+    });
+
+    masterVolume.addEventListener('input', (e) => {
+      masterVolumePct = parseInt(e.target.value, 10);
+      masterVolumeValue.textContent = `${masterVolumePct}%`;
+      if (masterGainNode && audioCtx) {
+        masterGainNode.gain.setValueAtTime(masterVolumePct / 100, audioCtx.currentTime);
+      }
+      // Update all HTML5 audio volumes
+      Object.keys(channelAudios).forEach(id => {
+        channelAudios[id].volume = channels[id].volume * (masterVolumePct / 100);
+      });
+    });
+
+    // Channel Control Setup Helper
+    function setupChannel(id, name, activeNote) {
+      const toggle = document.getElementById(`${id}Toggle`);
+      const volume = document.getElementById(`${id}Volume`);
+      const volText = document.getElementById(`${id}VolText`);
+      const statusText = document.getElementById(`${id}StatusText`);
+      const indicator = document.getElementById(`${id}Indicator`);
+
+      function updateUI() {
+        if (channels[id].enabled) {
+          toggle.textContent = 'ON';
+          toggle.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 text-white shadow-sm';
+          if (statusText) statusText.textContent = isMasterPlaying ? activeNote : 'Armed (Master Paused)';
+        } else {
+          toggle.textContent = 'OFF';
+          toggle.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-stone-700 text-stone-300 hover:bg-stone-600';
+          if (statusText) statusText.textContent = 'Channel Inactive';
+        }
+        updateIndicator();
+      }
+
+      function updateIndicator() {
+        if (indicator) {
+          if (channels[id].enabled && isMasterPlaying) {
+            indicator.classList.remove('hidden');
+          } else {
+            indicator.classList.add('hidden');
+          }
+        }
+      }
+
+      toggle.addEventListener('click', () => {
+        channels[id].enabled = !channels[id].enabled;
+        if (channels[id].enabled && !isMasterPlaying) {
+          initAudioContext();
+          isMasterPlaying = true;
+          syncMasterPlayingUI();
+        }
+        updateUI();
+        updateAudioOutputs();
+      });
+
+      volume.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        channels[id].volume = val / 100;
+        volText.textContent = `${val}%`;
+        if (channels[id].nodes.gain && audioCtx) {
+          channels[id].nodes.gain.gain.setValueAtTime(channels[id].volume, audioCtx.currentTime);
+        }
+        channelAudios[id].volume = channels[id].volume * (masterVolumePct / 100);
+      });
+
+      return { updateUI, updateIndicator };
+    }
+
+    const channelControls = {
+      rain: setupChannel('rain', 'Rain', 'Playing Rain Audio'),
+      thunder: setupChannel('thunder', 'Thunder', 'Rolling Storm'),
+      cafe: setupChannel('cafe', 'Cafe', 'Playing Cafe Hum'),
+      steam: setupChannel('steam', 'Steam', 'Frother Active'),
+      clink: setupChannel('clink', 'Clink', 'Dishes in Sink Active'),
+      chatter: setupChannel('chatter', 'Chatter', 'Chatter Active'),
+      traffic: setupChannel('traffic', 'Traffic', 'Traffic Rolling'),
+      fire: setupChannel('fire', 'Fireside', 'Fireside active')
+    };
+
+    function updateChannelUI(id) {
+      if (channelControls[id]) channelControls[id].updateUI();
+    }
+
+    function updateAllIndicators() {
+      Object.keys(channelControls).forEach(id => {
+        channelControls[id].updateUI();
+      });
+    }
+
+    // =========================================================================
+    // 6. UNIVERSAL MP3 VS SYNTH DUAL MODE CONTROLLERS
+    // =========================================================================
+    const channelIds = ['rain', 'fire', 'thunder', 'cafe', 'steam', 'clink', 'chatter', 'traffic'];
+
+    channelIds.forEach(id => {
+      const btnSynth = document.getElementById(`${id}ModeSynth`);
+      const btnMp3 = document.getElementById(`${id}ModeMp3`);
+      const subtitle = document.getElementById(`${id}Subtitle`);
+      const fileInput = document.getElementById(`${id}FileInput`);
+      const color = channelColors[id];
+
+      function setMode(mode) {
+        channels[id].mode = mode;
+        if (mode === 'mp3') {
+          btnMp3.className = `px-2 py-0.5 rounded font-medium transition-all bg-${color}-600 text-white`;
+          btnSynth.className = 'px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200';
+          if (!channelAudios[id].src) {
+            subtitle.textContent = 'MP3 Selected (Choose file to play)';
+          } else if (id === 'rain' || id === 'chatter') {
+            subtitle.textContent = 'Real MP3 Loop Active';
+          }
+        } else {
+          btnSynth.className = `px-2 py-0.5 rounded font-medium transition-all bg-${color}-600 text-white`;
+          btnMp3.className = 'px-2 py-0.5 rounded font-medium transition-all text-stone-400 hover:text-stone-200';
+          subtitle.textContent = 'Procedural Synthesis Active';
+        }
+
+        if (channels[id].enabled && isMasterPlaying) {
+          startChannelAudio(id);
+        }
+      }
+
+      if (btnSynth) btnSynth.addEventListener('click', () => setMode('synth'));
+      if (btnMp3) btnMp3.addEventListener('click', () => setMode('mp3'));
+
+      if (fileInput) {
+        fileInput.addEventListener('change', (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            channelAudios[id].src = URL.createObjectURL(file);
+            channelAudios[id].loop = true;
+            setMode('mp3');
+            subtitle.textContent = `Custom: ${file.name.substring(0, 15)}...`;
+            if (channels[id].enabled && isMasterPlaying) {
+              channelAudios[id].volume = channels[id].volume * (masterVolumePct / 100);
+              channelAudios[id].play().catch(() => {});
+            }
+          }
+        });
+      }
+    });
+
+    // Thunder Frequency Slider
+    const thunderFreq = document.getElementById('thunderFreq');
+    const thunderFreqText = document.getElementById('thunderFreqText');
+
+    thunderFreq.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      channels.thunder.frequency = val;
+      thunderFreqText.textContent = `${val} / min`;
+      if (channels.thunder.enabled && isMasterPlaying && channels.thunder.mode === 'synth') {
+        scheduleNextThunder();
+      }
+    });
+
+    // Manual Strike Thunder Button
+    const strikeThunderBtn = document.getElementById('strikeThunderBtn');
+    strikeThunderBtn.addEventListener('click', () => {
+      initAudioContext();
+      if (!isMasterPlaying) {
+        isMasterPlaying = true;
+        syncMasterPlayingUI();
+      }
+      if (!channels.thunder.enabled) {
+        channels.thunder.enabled = true;
+        updateChannelUI('thunder');
+      }
+      if (channels.thunder.mode === 'mp3') {
+        channelAudios.thunder.currentTime = 0;
+        channelAudios.thunder.play().catch(() => {});
+      } else {
+        triggerThunderRoll();
+      }
+      updateAudioOutputs();
+      updateAllIndicators();
+    });
+
+    // Manual Clatter Dishes Button
+    const clatterDishesBtn = document.getElementById('clatterDishesBtn');
+    clatterDishesBtn.addEventListener('click', () => {
+      initAudioContext();
+      if (!isMasterPlaying) {
+        isMasterPlaying = true;
+        syncMasterPlayingUI();
+      }
+      if (!channels.clink.enabled) {
+        channels.clink.enabled = true;
+        updateChannelUI('clink');
+      }
+      if (channels.clink.mode === 'mp3') {
+        channelAudios.clink.currentTime = 0;
+        channelAudios.clink.play().catch(() => {});
+      } else {
+        playDishesInSinkClatter();
+      }
+      updateAudioOutputs();
+      updateAllIndicators();
+    });
+
+    // Preset Buttons
+    document.getElementById('presetRainyCafe').addEventListener('click', () => {
+      initAudioContext();
+      isMasterPlaying = true;
+      channels.rain.enabled = true;
+      channels.thunder.enabled = true;
+      channels.cafe.enabled = true;
+      channels.steam.enabled = true;
+      channels.clink.enabled = true;
+      channels.chatter.enabled = false;
+      channels.traffic.enabled = false;
+      syncMasterPlayingUI();
+      updateAllIndicators();
+      updateAudioOutputs();
+    });
+
+    document.getElementById('presetQuietPark').addEventListener('click', () => {
+      initAudioContext();
+      isMasterPlaying = true;
+      channels.rain.enabled = false;
+      channels.thunder.enabled = false;
+      channels.cafe.enabled = false;
+      channels.steam.enabled = false;
+      channels.clink.enabled = false;
+      channels.chatter.enabled = true;
+      channels.traffic.enabled = true;
+      syncMasterPlayingUI();
+      updateAllIndicators();
+      updateAudioOutputs();
+    });
+
+    document.getElementById('presetResetAll').addEventListener('click', () => {
+      Object.keys(channels).forEach(k => { channels[k].enabled = false; });
+      isMasterPlaying = false;
+      syncMasterPlayingUI();
+      updateAllIndicators();
+      updateAudioOutputs();
+    });
+
+    // =========================================================================
+    // 7. SPOTIFY EMBED COMPANION
+    // =========================================================================
+    const customMusicUrl = document.getElementById('customMusicUrl');
+    const loadMusicBtn = document.getElementById('loadMusicBtn');
+    const musicStatusMessage = document.getElementById('musicStatusMessage');
+    const musicIframe = document.getElementById('musicIframe');
+
+    const spotifyLibrary = {
+      lofi: 'https://open.spotify.com/embed/playlist/37i9dQZF1DXc8kgYqQLMfH?utm_source=generator&theme=0',
+      acoustic: 'https://open.spotify.com/embed/playlist/37i9dQZF1DX4sWSpwq3LiO?utm_source=generator&theme=0',
+      jazz: 'https://open.spotify.com/embed/playlist/37i9dQZF1DX65ddUkCwOX4?utm_source=generator&theme=0',
+      peaceful: 'https://open.spotify.com/embed/playlist/37i9dQZF1DX4sWSpwq3LiO?utm_source=generator&theme=0'
+    };
+
+    function loadSpotifyUrl(url, title = '') {
+      musicIframe.style.opacity = '0.3';
+      musicIframe.src = url;
+      musicIframe.height = '152';
+      setTimeout(() => {
+        musicIframe.style.opacity = '1';
+      }, 250);
+
+      if (title) {
+        musicStatusMessage.textContent = `Now Playing: ${title}`;
+      } else {
+        musicStatusMessage.textContent = 'Connected to Spotify Web Player. Use playback controls inside the player.';
+      }
+    }
+
+    document.getElementById('quickLofi').addEventListener('click', () => {
+      loadSpotifyUrl(spotifyLibrary.lofi, 'Coffeehouse Lo-Fi Beats (Spotify)');
+    });
+    document.getElementById('quickAcoustic').addEventListener('click', () => {
+      loadSpotifyUrl(spotifyLibrary.acoustic, 'Acoustic Cafe & Guitar (Spotify)');
+    });
+    document.getElementById('quickJazz').addEventListener('click', () => {
+      loadSpotifyUrl(spotifyLibrary.jazz, 'Midnight Coffee Table Jazz (Spotify)');
+    });
+    document.getElementById('quickPeaceful').addEventListener('click', () => {
+      loadSpotifyUrl(spotifyLibrary.peaceful, 'Peaceful Study Piano (Spotify)');
+    });
+
+    function parseSpotifyUrl(inputUrl) {
+      const url = inputUrl.trim();
+      if (!url) return null;
+
+      const spotifyMatch = url.match(/open\.spotify\.com\/(playlist|album|track|artist)\/([a-zA-Z0-9]+)/);
+      if (spotifyMatch) {
+        const type = spotifyMatch[1];
+        const id = spotifyMatch[2];
+        return {
+          url: `https://open.spotify.com/embed/${type}/${id}?utm_source=generator&theme=0`,
+          title: `Custom Spotify ${type.toUpperCase()}`
+        };
+      }
+      return null;
+    }
+
+    loadMusicBtn.addEventListener('click', () => {
+      const input = customMusicUrl.value.trim();
+      if (!input) {
+        musicStatusMessage.textContent = 'Please paste a valid Spotify playlist, album, or track URL.';
+        return;
+      }
+
+      const parsed = parseSpotifyUrl(input);
+      if (parsed) {
+        loadSpotifyUrl(parsed.url, parsed.title);
+        musicStatusMessage.textContent = `Loaded: ${parsed.title}`;
+      } else {
+        musicStatusMessage.textContent = 'Could not recognize Spotify URL. Please paste a link from open.spotify.com (e.g. playlist, album, or track).';
+      }
+    });
+
+    customMusicUrl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        loadMusicBtn.click();
+      }
+    });
+
+    // Initialize Default Spotify Player on Page Load
+    loadSpotifyUrl(spotifyLibrary.lofi, 'Coffeehouse Lo-Fi Beats (Spotify)');
+
+  </script>
+</body>
+</html>
